@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using MotdApiDotnet.Models;
+using MotdApiDotnet.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.Configure<MotdDatabaseSettings>(builder.Configuration.GetSection("MotdDatabase"));
 builder.Services.AddControllers();
 builder.Services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
