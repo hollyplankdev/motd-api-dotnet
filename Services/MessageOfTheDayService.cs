@@ -29,12 +29,31 @@ public class MessageOfTheDayService
     //  Public Methods
     //
 
+    /// <summary>
+    /// Create a new MOTD in the database.
+    /// </summary>
+    /// <param name="newMotd">The entire new MOTD object to put in the DB.</param>
     public async Task CreateAsync(MessageOfTheDayItem newMotd) => await motdCollection.InsertOneAsync(newMotd);
 
+    /// <summary>
+    /// Get the most recently created MOTD.
+    /// </summary>
+    /// <returns>The latest MOTD if there is one, null otherwise.</returns>
     public async Task<MessageOfTheDayItem?> GetLatestAsync() => await motdCollection.Find(_ => true).SortByDescending(motd => motd.CreatedAt).FirstOrDefaultAsync();
 
+    /// <summary>
+    /// Get an existing MOTD.
+    /// </summary>
+    /// <param name="id">The ID of the MOTD to get.</param>
+    /// <returns>The MOTD with the matching id, null if there isn't one.</returns>
     public async Task<MessageOfTheDayItem?> GetAsync(string id) => await motdCollection.Find(motd => motd.Id == id).FirstOrDefaultAsync();
 
+    /// <summary>
+    /// Get a list of existing MOTDs, sorted in descending order by creation date. Results are paginated.
+    /// </summary>
+    /// <param name="pageSize">The number of items to return per-page. While paginating, this value should stay the same.</param>
+    /// <param name="previousLastId">OPTIONAL - The value of `lastId` from a previous call. Use this while paginating to progress through pages of results.</param>
+    /// <returns>A single page of listed results.</returns>
     public async Task<List<MessageOfTheDayItem>> ListPageAsync(int pageSize, string? previousLastId = null)
     {
         var query = motdCollection.Find(_ => true);
@@ -49,8 +68,17 @@ public class MessageOfTheDayService
         return await query.Limit(pageSize).ToListAsync();
     }
 
+    /// <summary>
+    /// Update the message text of an existing MOTD.
+    /// </summary>
+    /// <param name="id">The ID of the MOTD to update.</param>
+    /// <param name="updatedMotd">The entire updated MOTD object to replace in the DB.</param>
     public async Task UpdateAsync(string id, MessageOfTheDayItem updatedMotd) => await motdCollection.ReplaceOneAsync(motd => motd.Id == id, updatedMotd);
 
+    /// <summary>
+    /// Removes an existing MOTD.
+    /// </summary>
+    /// <param name="id">The ID of the MOTD to delete.</param>
     public async Task RemoveAsync(string id) => await motdCollection.DeleteOneAsync(motd => motd.Id == id);
 
 }
