@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Bson.Serialization.Attributes;
 using MotdApiDotnet.Models;
 using MotdApiDotnet.Services;
 
@@ -14,6 +15,20 @@ namespace MotdApiDotnet.Controllers
     [ApiController]
     public class MessageOfTheDayController : ControllerBase
     {
+        //
+        //  Classes
+        //
+
+        public class CreateMotdForm
+        {
+            [BsonElement("message")]
+            public string Message { get; set; } = null!;
+        }
+
+        //
+        //  Variables
+        //
+
         private readonly MessageOfTheDayService service;
 
         //
@@ -41,9 +56,9 @@ namespace MotdApiDotnet.Controllers
 
         // POST: /
         [HttpPost]
-        public async Task<ActionResult<MessageOfTheDayItem>> PostMotd(string message)
+        public async Task<ActionResult<MessageOfTheDayItem>> PostMotd([FromBody] CreateMotdForm body)
         {
-            var motd = new MessageOfTheDayItem() { Message = message };
+            var motd = new MessageOfTheDayItem() { Message = body.Message };
             return await service.CreateAsync(motd);
         }
 
