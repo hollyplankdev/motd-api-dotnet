@@ -42,7 +42,12 @@ public class MessageOfTheDayService
     /// Create a new MOTD in the database.
     /// </summary>
     /// <param name="newMotd">The entire new MOTD object to put in the DB.</param>
-    public async Task CreateAsync(MessageOfTheDayItem newMotd) => await motdCollection.InsertOneAsync(newMotd);
+    public async Task<MessageOfTheDayItem> CreateAsync(MessageOfTheDayItem newMotd)
+    {
+        // TODO - Assign createdAt and updatedAt
+        await motdCollection.InsertOneAsync(newMotd);
+        return newMotd;
+    }
 
     /// <summary>
     /// Get the most recently created MOTD.
@@ -82,12 +87,22 @@ public class MessageOfTheDayService
     /// </summary>
     /// <param name="id">The ID of the MOTD to update.</param>
     /// <param name="updatedMotd">The entire updated MOTD object to replace in the DB.</param>
-    public async Task UpdateAsync(string id, MessageOfTheDayItem updatedMotd) => await motdCollection.ReplaceOneAsync(motd => motd.Id == id, updatedMotd);
+    public async Task<MessageOfTheDayItem> UpdateAsync(string id, MessageOfTheDayItem updatedMotd)
+    {
+        // TODO - assign updatedAt
+        await motdCollection.ReplaceOneAsync(motd => motd.Id == id, updatedMotd);
+        return updatedMotd;
+    }
 
     /// <summary>
     /// Removes an existing MOTD.
     /// </summary>
     /// <param name="id">The ID of the MOTD to delete.</param>
-    public async Task RemoveAsync(string id) => await motdCollection.DeleteOneAsync(motd => motd.Id == id);
+    /// <returns>true if removed, false otherwise.</returns>
+    public async Task<bool> RemoveAsync(string id)
+    {
+        var result = await motdCollection.DeleteOneAsync(motd => motd.Id == id);
+        return result.IsAcknowledged && result.DeletedCount > 0;
+    }
 
 }

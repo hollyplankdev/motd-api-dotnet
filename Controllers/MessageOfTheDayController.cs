@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Bson.Serialization.Attributes;
 using MotdApiDotnet.Models;
 using MotdApiDotnet.Services;
 
@@ -14,6 +15,20 @@ namespace MotdApiDotnet.Controllers
     [ApiController]
     public class MessageOfTheDayController : ControllerBase
     {
+        //
+        //  Classes
+        //
+
+        public class CreateMotdForm
+        {
+            [BsonElement("message")]
+            public string Message { get; set; } = null!;
+        }
+
+        //
+        //  Variables
+        //
+
         private readonly MessageOfTheDayService service;
 
         //
@@ -33,43 +48,62 @@ namespace MotdApiDotnet.Controllers
         [HttpGet]
         public async Task<ActionResult<MessageOfTheDayItem>> GetLatestMotd()
         {
-            return BadRequest();
+            var motd = await service.GetLatestAsync();
+            if (motd == null) return StatusCode(404);
+
+            return motd;
         }
 
         // POST: /
         [HttpPost]
-        public async Task<ActionResult<MessageOfTheDayItem>> PostMotd()
+        public async Task<ActionResult<MessageOfTheDayItem>> PostMotd([FromBody] CreateMotdForm body)
         {
-            return BadRequest();
+            var motd = new MessageOfTheDayItem() { Message = body.Message };
+            return await service.CreateAsync(motd);
         }
 
         // GET: /6663730d73d66868453f5990
         [HttpGet("{id}")]
         public async Task<ActionResult<MessageOfTheDayItem>> GetSpecificMotd(string id)
         {
-            return BadRequest();
+            var motd = await service.GetAsync(id);
+            if (motd == null) return StatusCode(404);
+
+            return motd;
         }
 
         // PATCH: /6663730d73d66868453f5990
         [HttpPost("{id}")]
-        public async Task<ActionResult<MessageOfTheDayItem>> PatchMotd(string id)
+        public async Task<ActionResult<MessageOfTheDayItem>> PatchMotd(string id, string message)
         {
-            return BadRequest();
-        }
+            // TODO - we need a better patch function on the service
+            var motd = await service.GetAsync(id);
+            if (motd == null) return StatusCode(404);
 
+            // Update the message in the DB
+            motd.Message = message;
+            return await service.UpdateAsync(id, motd);
+        }
 
         // DELETE: /6663730d73d66868453f5990
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMotd(string id)
         {
-            return BadRequest();
+            var didRemove = await service.RemoveAsync(id);
+            if (!didRemove) return StatusCode(404);
+            return StatusCode(200);
         }
 
         // GET: /history
         [HttpGet("history")]
-        public async Task<ActionResult<HistoryPage<MessageOfTheDayItem>>> GetOldMotds()
+        public async Task<ActionResult<HistoryPage<MessageOfTheDayItem>>> GetOldMotds([FromQuery] string? previousLastId = null, [FromQuery] int pageSize = 8)
         {
-            return BadRequest();
+            var pageItems = await service.ListPageAsync(pageSize, previousLastId);
+            return new HistoryPage<MessageOfTheDayItem>()
+            {
+                LastId = pageItems.Count > 0 ? pageItems.Last().Id : null,
+                Items = pageItems
+            };
         }
     }
 }
