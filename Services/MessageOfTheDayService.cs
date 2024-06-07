@@ -35,18 +35,25 @@ public class MessageOfTheDayService
         if (motd != null) return;
 
         // OTHERWISE - populate the db with a default MOTD!
-        await CreateAsync(new MessageOfTheDayItem() { Message = "There's a great deal of history that you should know, but I'm afraid that... I must continue my writing." });
+        await CreateAsync("There's a great deal of history that you should know, but I'm afraid that... I must continue my writing.");
     }
 
     /// <summary>
     /// Create a new MOTD in the database.
     /// </summary>
-    /// <param name="newMotd">The entire new MOTD object to put in the DB.</param>
-    public async Task<MessageOfTheDayItem> CreateAsync(MessageOfTheDayItem newMotd)
+    /// <param name="message">The message text of the new MOTD to create.</param>
+    /// <param name="newMotd">The entire new MOTD object to put in the DB, or null if params are invalid.</param>
+    public async Task<MessageOfTheDayItem?> CreateAsync(string message)
     {
-        // TODO - Assign createdAt and updatedAt
-        await motdCollection.InsertOneAsync(newMotd);
-        return newMotd;
+        var motd = new MessageOfTheDayItem()
+        {
+            Message = message,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        await motdCollection.InsertOneAsync(motd);
+        return motd;
     }
 
     /// <summary>

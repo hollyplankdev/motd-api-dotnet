@@ -58,8 +58,10 @@ namespace MotdApiDotnet.Controllers
         [HttpPost]
         public async Task<ActionResult<MessageOfTheDayItem>> PostMotd([FromBody] CreateMotdForm body)
         {
-            var motd = new MessageOfTheDayItem() { Message = body.Message };
-            return await service.CreateAsync(motd);
+            var motd = await service.CreateAsync(body.Message);
+            if (motd == null) return StatusCode(400);
+
+            return motd;
         }
 
         // GET: /6663730d73d66868453f5990
