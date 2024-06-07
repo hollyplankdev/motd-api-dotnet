@@ -34,7 +34,7 @@ namespace MotdApiDotnet.Controllers
         public async Task<ActionResult<MessageOfTheDayItem>> GetLatestMotd()
         {
             var motd = await service.GetLatestAsync();
-            if (motd == null) return NotFound();
+            if (motd == null) return StatusCode(404);
 
             return motd;
         }
@@ -56,7 +56,7 @@ namespace MotdApiDotnet.Controllers
         public async Task<ActionResult<MessageOfTheDayItem>> GetSpecificMotd(string id)
         {
             var motd = await service.GetAsync(id);
-            if (motd == null) return NotFound();
+            if (motd == null) return StatusCode(404);
 
             return motd;
         }
@@ -67,7 +67,7 @@ namespace MotdApiDotnet.Controllers
         {
             // TODO - we need a better patch function on the service
             var motd = await service.GetAsync(id);
-            if (motd == null) return NotFound();
+            if (motd == null) return StatusCode(404);
 
             // Update the message in the DB
             motd.Message = message;
@@ -83,7 +83,7 @@ namespace MotdApiDotnet.Controllers
         {
             // TODO - Modify RemoveAsync to return if the object existed or not
             await service.RemoveAsync(id);
-            return Ok();
+            return StatusCode(200);
         }
 
         // GET: /history
