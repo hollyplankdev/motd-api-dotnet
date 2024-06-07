@@ -44,11 +44,7 @@ namespace MotdApiDotnet.Controllers
         public async Task<ActionResult<MessageOfTheDayItem>> PostMotd(string message)
         {
             var motd = new MessageOfTheDayItem() { Message = message };
-            await service.CreateAsync(motd);
-
-            // TODO - Modify CreateAsync to return the created object
-            // then return below
-            return BadRequest();
+            return await service.CreateAsync(motd);
         }
 
         // GET: /6663730d73d66868453f5990
