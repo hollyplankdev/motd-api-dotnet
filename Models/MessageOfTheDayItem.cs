@@ -13,7 +13,7 @@ public class MessageOfTheDayItem
     /// </summary>
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
-    public required string Id { get; set; }
+    public string Id { get; set; } = null!;
 
     /// <summary>
     /// The actual message text contained in this MOTD.
