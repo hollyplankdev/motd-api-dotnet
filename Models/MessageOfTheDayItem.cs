@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -13,7 +14,8 @@ public class MessageOfTheDayItem
     /// </summary>
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
-    public required string Id { get; set; }
+    [JsonPropertyName("_id")]
+    public string Id { get; set; } = null!;
 
     /// <summary>
     /// The actual message text contained in this MOTD.
