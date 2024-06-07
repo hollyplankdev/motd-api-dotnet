@@ -16,10 +16,18 @@ namespace MotdApiDotnet.Controllers
     {
         private readonly MessageOfTheDayService service;
 
+        //
+        //  Constructor
+        //
+
         public MessageOfTheDayController(MessageOfTheDayService service)
         {
             this.service = service;
         }
+
+        //
+        //  Routes
+        //
 
         // GET: /
         [HttpGet]
