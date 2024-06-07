@@ -74,8 +74,8 @@ namespace MotdApiDotnet.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMotd(string id)
         {
-            // TODO - Modify RemoveAsync to return if the object existed or not
-            await service.RemoveAsync(id);
+            var didRemove = await service.RemoveAsync(id);
+            if (!didRemove) return StatusCode(404);
             return StatusCode(200);
         }
 

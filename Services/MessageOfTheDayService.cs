@@ -98,6 +98,11 @@ public class MessageOfTheDayService
     /// Removes an existing MOTD.
     /// </summary>
     /// <param name="id">The ID of the MOTD to delete.</param>
-    public async Task RemoveAsync(string id) => await motdCollection.DeleteOneAsync(motd => motd.Id == id);
+    /// <returns>true if removed, false otherwise.</returns>
+    public async Task<bool> RemoveAsync(string id)
+    {
+        var result = await motdCollection.DeleteOneAsync(motd => motd.Id == id);
+        return result.IsAcknowledged && result.DeletedCount > 0;
+    }
 
 }
