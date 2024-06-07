@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Options;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using MotdApiDotnet.Models;
 using MotdApiDotnet.Settings;
