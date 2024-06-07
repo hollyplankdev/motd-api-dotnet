@@ -18,6 +18,8 @@ builder.Services.AddSingleton<MessageOfTheDayService>();
 
 var app = builder.Build();
 
+await app.Services.GetRequiredService<MessageOfTheDayService>().PopulateDefaultsAsync();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -32,3 +34,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
