@@ -28,6 +28,16 @@ public class MessageOfTheDayService
     //  Public Methods
     //
 
+    public async Task PopulateDefaultsAsync()
+    {
+        // If there is at LEAST one MOTD, we don't need to populate. EXIT EARLY!
+        var motd = await GetLatestAsync();
+        if (motd != null) return;
+
+        // OTHERWISE - populate the db with a default MOTD!
+        await CreateAsync(new MessageOfTheDayItem() { Message = "There's a great deal of history that you should know, but I'm afraid that... I must continue my writing." });
+    }
+
     /// <summary>
     /// Create a new MOTD in the database.
     /// </summary>
