@@ -87,10 +87,11 @@ public class MessageOfTheDayService
     /// </summary>
     /// <param name="id">The ID of the MOTD to update.</param>
     /// <param name="updatedMotd">The entire updated MOTD object to replace in the DB.</param>
-    public async Task UpdateAsync(string id, MessageOfTheDayItem updatedMotd)
+    public async Task<MessageOfTheDayItem> UpdateAsync(string id, MessageOfTheDayItem updatedMotd)
     {
         // TODO - assign updatedAt
         await motdCollection.ReplaceOneAsync(motd => motd.Id == id, updatedMotd);
+        return updatedMotd;
     }
 
     /// <summary>

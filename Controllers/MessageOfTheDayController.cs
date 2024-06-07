@@ -67,10 +67,7 @@ namespace MotdApiDotnet.Controllers
 
             // Update the message in the DB
             motd.Message = message;
-            await service.UpdateAsync(id, motd);
-
-            // TODO - modify UpdateAsync to return the modified object?
-            return motd;
+            return await service.UpdateAsync(id, motd);
         }
 
         // DELETE: /6663730d73d66868453f5990
