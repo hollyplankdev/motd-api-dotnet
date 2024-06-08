@@ -93,12 +93,18 @@ public class MessageOfTheDayService
     /// Update the message text of an existing MOTD.
     /// </summary>
     /// <param name="id">The ID of the MOTD to update.</param>
-    /// <param name="updatedMotd">The entire updated MOTD object to replace in the DB.</param>
-    public async Task<MessageOfTheDayItem> UpdateAsync(string id, MessageOfTheDayItem updatedMotd)
+    /// <param name="newMessage">The new message text for the MOTD.</param>
+    /// <returns>The updated MOTD or null if the MOTD couldn't be found.</returns>
+    public async Task<MessageOfTheDayItem?> UpdateAsync(string id, string newMessage)
     {
-        // TODO - assign updatedAt
-        await motdCollection.ReplaceOneAsync(motd => motd.Id == id, updatedMotd);
-        return updatedMotd;
+        var update = Builders<MessageOfTheDayItem>.Update
+            .Set(motd => motd.Message, newMessage)          // Update the message field
+            .Set(motd => motd.UpdatedAt, DateTime.UtcNow);  // Make sure to upkeep the updatedAt field
+
+        var result = await motdCollection.UpdateOneAsync(motd => motd.Id == id, update);
+        if (!result.IsAcknowledged || result.ModifiedCount <= 0) return null;
+
+        return await GetAsync(id);
     }
 
     /// <summary>
