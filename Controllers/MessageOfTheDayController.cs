@@ -73,7 +73,7 @@ namespace MotdApiDotnet.Controllers
         }
 
         // PATCH: /6663730d73d66868453f5990
-        [HttpPost("{id}")]
+        [HttpPatch("{id}")]
         public async Task<ActionResult<MessageOfTheDayItem>> PatchMotd(string id, string message)
         {
             // TODO - we need a better patch function on the service
