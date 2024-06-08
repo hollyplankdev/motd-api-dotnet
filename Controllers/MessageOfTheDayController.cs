@@ -81,7 +81,7 @@ namespace MotdApiDotnet.Controllers
         }
 
         // PATCH: /6663730d73d66868453f5990
-        [HttpPost("{id}")]
+        [HttpPatch("{id}")]
         public async Task<ActionResult<MessageOfTheDayItem>> PatchMotd(string id, [FromBody] UpdateMotdBody body)
         {
             var motd = await service.UpdateAsync(id, body.Message);
