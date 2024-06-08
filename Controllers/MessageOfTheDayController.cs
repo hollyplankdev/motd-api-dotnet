@@ -19,7 +19,13 @@ namespace MotdApiDotnet.Controllers
         //  Classes
         //
 
-        public class CreateMotdForm
+        public class CreateMotdBody
+        {
+            [BsonElement("message")]
+            public string Message { get; set; } = null!;
+        }
+
+        public class UpdateMotdBody
         {
             [BsonElement("message")]
             public string Message { get; set; } = null!;
@@ -56,10 +62,12 @@ namespace MotdApiDotnet.Controllers
 
         // POST: /
         [HttpPost]
-        public async Task<ActionResult<MessageOfTheDayItem>> PostMotd([FromBody] CreateMotdForm body)
+        public async Task<ActionResult<MessageOfTheDayItem>> PostMotd([FromBody] CreateMotdBody body)
         {
-            var motd = new MessageOfTheDayItem() { Message = body.Message };
-            return await service.CreateAsync(motd);
+            var motd = await service.CreateAsync(body.Message);
+            if (motd == null) return StatusCode(400);
+
+            return motd;
         }
 
         // GET: /6663730d73d66868453f5990
@@ -74,15 +82,12 @@ namespace MotdApiDotnet.Controllers
 
         // PATCH: /6663730d73d66868453f5990
         [HttpPatch("{id}")]
-        public async Task<ActionResult<MessageOfTheDayItem>> PatchMotd(string id, string message)
+        public async Task<ActionResult<MessageOfTheDayItem>> PatchMotd(string id, [FromBody] UpdateMotdBody body)
         {
-            // TODO - we need a better patch function on the service
-            var motd = await service.GetAsync(id);
+            var motd = await service.UpdateAsync(id, body.Message);
             if (motd == null) return StatusCode(404);
 
-            // Update the message in the DB
-            motd.Message = message;
-            return await service.UpdateAsync(id, motd);
+            return motd;
         }
 
         // DELETE: /6663730d73d66868453f5990
